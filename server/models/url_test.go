@@ -3,19 +3,20 @@ package models
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/alicebob/miniredis"
-	"github.com/danielnguyentb/url-shortener/libs"
 	"github.com/go-redis/redis/v8"
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"github.com/danielnguyentb/url-shortener/libs"
 )
 
 type testCases struct {

@@ -1,14 +1,16 @@
 package controllers
 
 import (
-	"github.com/danielnguyentb/url-shortener/libs"
-	"github.com/danielnguyentb/url-shortener/libs/render"
-	"github.com/danielnguyentb/url-shortener/server/models"
+	"net/http"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"net/http"
+
+	"github.com/danielnguyentb/url-shortener/libs"
+	"github.com/danielnguyentb/url-shortener/libs/render"
+	"github.com/danielnguyentb/url-shortener/server/models"
 )
 
 var (

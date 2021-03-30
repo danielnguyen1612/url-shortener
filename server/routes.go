@@ -1,15 +1,15 @@
 package server
 
 import (
-	"github.com/danielnguyentb/url-shortener/server/controllers"
 	"net/http"
+
+	"github.com/pkg/errors"
+	"go.uber.org/zap"
 
 	"github.com/danielnguyentb/url-shortener/core"
 	"github.com/danielnguyentb/url-shortener/libs"
 	"github.com/danielnguyentb/url-shortener/libs/render"
-
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
+	"github.com/danielnguyentb/url-shortener/server/controllers"
 )
 
 func AddRoutes(r *core.Mux, log *zap.Logger) error {

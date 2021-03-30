@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/danielnguyentb/url-shortener/core"
-	"github.com/spf13/viper"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -12,13 +10,16 @@ import (
 	"testing"
 
 	"github.com/alicebob/miniredis"
-	"github.com/danielnguyentb/url-shortener/libs"
 	"github.com/go-redis/redis/v8"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"github.com/danielnguyentb/url-shortener/core"
+	"github.com/danielnguyentb/url-shortener/libs"
 )
 
 func TestUrlCtrl(t *testing.T) {
