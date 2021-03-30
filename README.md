@@ -15,7 +15,14 @@ go get
 
 3. Run service
 ```bash
-go run main.go serve
+go run main.go serve --config config.yaml
 ```
 
 Then the service will be ran on address: http://location:8080. For more configurations, please take a look at `config.yaml` file
+
+
+## How to run test
+Run the following command
+```bash
+go test -v ./...
+```

@@ -16,7 +16,6 @@ import (
 
 // Buffer for id to generate short code more than 4 characters
 const idBuffer = 5000000
-const keyExpireTime = "expire"
 
 var (
 	ErrNotFound = errors.New("Not Found")
@@ -24,13 +23,13 @@ var (
 )
 
 type Url struct {
-	ID        int    `gorm:"primaryKey;autoIncrement"`
-	Key       string `gorm:"index;not null;unique"`
-	Origin    string `gorm:"not null"`
-	Hits      uint   `gorm:"default:0"`
-	Expiry    *time.Time
-	CreatedAt time.Time `gorm:"autoCreateTime"`
-	Status    bool      `gorm:"default:1"`
+	ID        int        `gorm:"primaryKey;autoIncrement" json:"id"`
+	Key       string     `gorm:"index;not null;unique" json:"short_code"`
+	Origin    string     `gorm:"not null" json:"origin_url"`
+	Hits      uint       `gorm:"default:0" json:"hits"`
+	Expiry    *time.Time `json:"expiry"`
+	CreatedAt time.Time  `gorm:"autoCreateTime" json:"-"`
+	Status    bool       `gorm:"default:1" json:"status"`
 }
 
 func (u Url) GetCacheKey() string {
@@ -126,7 +125,7 @@ func (u *UrlModel) cacheItem(item Url) error {
 
 func (u *UrlModel) hitItem(shortCode string) error {
 	// Hit the item
-	if result := u.db.Model(&Url{}).Where("key = ?", shortCode).UpdateColumn("hits", gorm.Expr("hits + ?", 1)); result.Error != nil {
+	if result := u.db.Model(&Url{}).Where("`key` = ?", shortCode).UpdateColumn("hits", gorm.Expr("hits + ?", 1)); result.Error != nil {
 		return errors.Wrap(result.Error, "u.db.Where.UpdateColumn")
 	}
 
@@ -149,7 +148,7 @@ func (u *UrlModel) FindByShortCode(shortCode string, hit bool) (*Url, error) {
 		}
 
 		if item.IsExpired() {
-			return nil, ErrExpired
+			return item, ErrExpired
 		}
 
 		if err := u.hitItem(shortCode); err != nil {
@@ -159,7 +158,7 @@ func (u *UrlModel) FindByShortCode(shortCode string, hit bool) (*Url, error) {
 		return item, nil
 	}
 
-	if result := u.db.Where("key = ?", shortCode).First(item); result.Error != nil {
+	if result := u.db.Model(&Url{}).Where("`key` = ?", shortCode).First(item); result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, ErrNotFound
 		}
@@ -168,7 +167,7 @@ func (u *UrlModel) FindByShortCode(shortCode string, hit bool) (*Url, error) {
 	}
 
 	if item.IsExpired() {
-		return nil, ErrExpired
+		return item, ErrExpired
 	}
 
 	if hit {
@@ -205,7 +204,7 @@ func (u *UrlModel) Delete(shortCode string) (bool, error) {
 func (u *UrlModel) GetList(shortCode, keywords string) ([]Url, error) {
 	model := u.db.Model(&Url{})
 	if len(shortCode) != 0 {
-		model.Where("key = ?", shortCode)
+		model.Where("`key` = ?", shortCode)
 	}
 
 	if len(keywords) != 0 {

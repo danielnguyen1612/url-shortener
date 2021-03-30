@@ -129,7 +129,7 @@ func (c testCases) testDeleteItem() {
 	lookup, err := c.model.FindByShortCode(item.Key, false)
 	require.Error(c.t, err)
 	require.True(c.t, errors.Is(err, ErrExpired))
-	assert.Nil(c.t, lookup)
+	assert.NotNil(c.t, lookup)
 
 	c.log.Debug("Delete item by non-exists key, not found should be expected")
 	lookup, err = c.model.FindByShortCode("non-exists", false)

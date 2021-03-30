@@ -35,7 +35,7 @@ func NewMysqlWithViper(log *zap.Logger) (*gorm.DB, error) {
 			viper.GetString(keyMysqlUser),
 			viper.GetString(keyMysqlPwd),
 			viper.GetString(keyMysqlHost),
-			viper.GetString(keyMysqlPort),
+			port,
 			viper.GetString(keyMysqlDb),
 		),
 	}))

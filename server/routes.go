@@ -43,6 +43,7 @@ func AddRoutes(r *core.Mux, log *zap.Logger) error {
 		return errors.Wrap(err, "controllers.NewAdminController")
 	}
 	r.Get("/admin/list", adminCtrl.GetList)
+	r.Delete("/admin/:code", adminCtrl.Delete)
 
 	return nil
 }

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"github.com/spf13/viper"
 	"net/http"
 	"regexp"
 	"strings"
@@ -10,6 +9,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 
@@ -25,13 +25,13 @@ const (
 )
 
 type Request struct {
-	Url    string `valid:"required,url"`
-	Expire string `valid:"time,optional"`
+	Url    string `valid:"required,url" json:"url"`
+	Expire string `valid:"time,optional" json:"expire,omitempty"`
 }
 
 type Response struct {
-	Success     bool
-	Message     string
+	Success     bool   `json:"success"`
+	Message     string `json:"message"`
 	ShortenUrl  string `json:"shorten_url"`
 	ShortenCode string `json:"shorten_code"`
 }
@@ -46,7 +46,7 @@ func (u *Url) CreateShorten(w http.ResponseWriter, r *http.Request) {
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, Response{
 			Success: false,
-			Message: errorOccurred,
+			Message: err.Error(),
 		})
 		return
 	}
@@ -68,18 +68,19 @@ func (u *Url) CreateShorten(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var expire time.Time
+	var expire *time.Time
 	if len(req.Expire) != 0 {
-		expire, _ = time.Parse(libs.TimeFormat, req.Expire)
+		expireTime, _ := time.Parse(libs.TimeFormat, req.Expire)
+		expire = &expireTime
 	}
 
 	// Generate new shorten url
-	item, err := u.model.Generate(req.Url, &expire)
+	item, err := u.model.Generate(req.Url, expire)
 	if err != nil {
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, Response{
 			Success: false,
-			Message: errorOccurred,
+			Message: err.Error(),
 		})
 		return
 	}
@@ -152,6 +153,10 @@ func (u *Url) parseRequestAndValidate(r *http.Request) (log *zap.Logger, req *Re
 
 func NewUrlController(log *zap.Logger, client *redis.Client, db *gorm.DB) (*Url, error) {
 	govalidator.TagMap["time"] = func(str string) bool {
+		if len(str) == 0 {
+			return true
+		}
+
 		return govalidator.IsTime(str, libs.TimeFormat)
 	}
 
