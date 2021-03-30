@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang
+
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      - run:
+          name: Install dependencies
+          command: go get
+
+      - run:
+          name: Linter check
+          command: docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.39.0 golangci-lint run -v
+
+      - run:
+          name: Run go test
+          command: go test -v ./...
