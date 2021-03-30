@@ -1,0 +1,19 @@
+version: "3.0"
+
+services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+
+  db:
+    image: mariadb
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: r00t@uth
+      MYSQL_DATABASE: url_shorten
+
+networks:
+  default:
+    attachable: true

@@ -1,0 +1,17 @@
+server:
+  addr: http://localhost
+  port: 8080
+
+redis:
+  addr: '127.0.0.1:6379'
+
+mysql:
+  host: 127.0.0.1
+  user: root
+  pwd: r00t@uth
+  db: url_shorten
+
+blacklistUrls:
+  - google\.com
+
+adminKey: aACsyFGAGwXLPmxXL7zqDTc35FRjKcAR
